@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrdersApiHandlerTest {
@@ -125,6 +126,36 @@ class OrdersApiHandlerTest {
 
         assertEquals(400, response.getStatusCode());
         assertEquals("{\"error\":\"INVALID_REQUEST\",\"message\":\"customerId is required\"}", response.getBody());
+    }
+
+    @Test
+    void deleteExistingOrderReturns204WithoutBody() {
+        APIGatewayProxyResponseEvent response = handle(request("DELETE", "/orders/{id}")
+                .withPathParameters(Map.of("id", "ORD-001")));
+
+        assertEquals(204, response.getStatusCode());
+        assertNull(response.getBody());
+        assertEquals(404, handle(request("GET", "/orders/{id}")
+                .withPathParameters(Map.of("id", "ORD-001"))).getStatusCode());
+    }
+
+    @Test
+    void deleteMissingOrderReturns404() {
+        APIGatewayProxyResponseEvent response = handle(request("DELETE", "/orders/{id}")
+                .withPathParameters(Map.of("id", "ORD-999")));
+
+        assertEquals(404, response.getStatusCode());
+        assertEquals("{\"error\":\"ORDER_NOT_FOUND\",\"message\":\"Order ORD-999 does not exist\"}",
+                response.getBody());
+    }
+
+    @Test
+    void deletingTheSameOrderTwiceReturns404TheSecondTime() {
+        APIGatewayProxyRequestEvent delete = request("DELETE", "/orders/{id}")
+                .withPathParameters(Map.of("id", "ORD-002"));
+
+        assertEquals(204, handle(delete).getStatusCode());
+        assertEquals(404, handle(delete).getStatusCode());
     }
 
     @Test

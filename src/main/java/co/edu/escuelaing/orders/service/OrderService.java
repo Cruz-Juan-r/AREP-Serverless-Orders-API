@@ -43,6 +43,13 @@ public class OrderService {
         return repository.findByCustomerId(customerId);
     }
 
+    public void deleteOrder(String id) {
+        requireText(id, "id");
+        if (!repository.deleteById(id)) {
+            throw new OrderNotFoundException(id);
+        }
+    }
+
     private static void validate(CreateOrderRequest request) {
         if (request == null) {
             throw new InvalidRequestException("Order data is required");

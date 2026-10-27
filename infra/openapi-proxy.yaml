@@ -40,3 +40,15 @@ paths:
         type: aws_proxy
         httpMethod: POST
         uri: arn:aws:apigateway:__REGION__:lambda:path/2015-03-31/functions/__PROXY_ARN__/invocations
+    delete:
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:__REGION__:lambda:path/2015-03-31/functions/__PROXY_ARN__/invocations

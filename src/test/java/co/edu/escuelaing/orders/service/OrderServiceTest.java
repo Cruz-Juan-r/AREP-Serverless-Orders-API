@@ -105,6 +105,23 @@ class OrderServiceTest {
     }
 
     @Test
+    void deletesAnExistingOrder() {
+        Order first = service.createOrder(new CreateOrderRequest("CUST-42", "MacBook Air", 1));
+        Order second = service.createOrder(new CreateOrderRequest("CUST-42", "Magic Mouse", 2));
+
+        service.deleteOrder(first.getId());
+
+        assertThrows(OrderNotFoundException.class, () -> service.getOrder(first.getId()));
+        assertEquals(List.of(second), service.getOrdersByCustomer("CUST-42"));
+    }
+
+    @Test
+    void deletingAMissingOrderFails() {
+        assertThrows(OrderNotFoundException.class, () -> service.deleteOrder("ORD-999"));
+        assertThrows(InvalidRequestException.class, () -> service.deleteOrder(" "));
+    }
+
+    @Test
     void sampleDataContainsKnownOrders() {
         OrderService withSamples = new OrderService(InMemoryOrderRepository.withSampleData());
 
