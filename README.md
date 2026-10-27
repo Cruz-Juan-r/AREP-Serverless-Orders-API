@@ -70,3 +70,26 @@ Porque no identifica un recurso, filtra una colección. `GET /orders?customerId=
 
 **¿Qué información debe contener una respuesta de error?**
 Un código estable para programas (`error`), un mensaje legible para personas (`message`) y el código de estado HTTP correcto. No debe exponer trazas, nombres de clases ni detalles de infraestructura.
+
+## 2. Parte I — Aplicación en Java puro
+
+```
+src/main/java/co/edu/escuelaing/orders/
+├── domain/        Order, CreateOrderRequest, OrderNotFoundException, InvalidRequestException
+├── repository/    OrderRepository (interfaz), InMemoryOrderRepository
+└── service/       OrderService  ← reglas de negocio y validación
+```
+
+`OrderService` ofrece `createOrder(CreateOrderRequest)`, `getOrder(String)` y `getOrdersByCustomer(String)`. Los fallos se expresan con excepciones de dominio (`OrderNotFoundException`, `InvalidRequestException`), no con códigos HTTP.
+
+El repositorio en memoria arranca con tres pedidos de ejemplo (`ORD-001` y `ORD-002` de `CUST-42`, `ORD-003` de `CUST-7`) para que los `GET` funcionen en una instancia recién creada. **No es almacenamiento persistente**: en Lambda los datos viven mientras viva el entorno de ejecución, se pierden en un *cold start* y no se comparten entre instancias concurrentes ni entre funciones distintas.
+
+### Checkpoint 1
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Se puede probar sin AWS? | Sí. `mvn test` ejecuta 11 pruebas JUnit sobre `OrderService` en milisegundos, sin red ni credenciales. |
+| ¿Requiere un servidor web? | No. Son clases Java normales que se llaman con métodos. |
+| ¿Requiere Spring Boot? | No. La única dependencia es JUnit, y solo en `test`. |
+| ¿Qué contiene el JAR generado? | Solo las clases compiladas de `domain`, `repository` y `service`, más el `MANIFEST.MF` y los metadatos de Maven (~10 KB). Ninguna librería externa. |
+| ¿Qué partes conocen HTTP? | Ninguna. Hasta aquí no existe el concepto de petición, respuesta ni código de estado. |
