@@ -1,0 +1,42 @@
+# Architecture B: API Gateway REST API with Lambda proxy integration.
+# API Gateway only routes; every method forwards the whole HTTP request to the same
+# Lambda (OrdersApiHandler), which builds the full HTTP response.
+# __PLACEHOLDERS__ are replaced by infra/deploy.sh.
+openapi: 3.0.1
+info:
+  title: orders-api-proxy
+  version: "1.0"
+paths:
+  /orders:
+    post:
+      operationId: createOrder
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:__REGION__:lambda:path/2015-03-31/functions/__PROXY_ARN__/invocations
+    get:
+      operationId: findOrdersByCustomer
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          schema: { type: string }
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:__REGION__:lambda:path/2015-03-31/functions/__PROXY_ARN__/invocations
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses: {}
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:apigateway:__REGION__:lambda:path/2015-03-31/functions/__PROXY_ARN__/invocations
