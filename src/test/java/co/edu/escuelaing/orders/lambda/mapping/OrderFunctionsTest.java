@@ -22,6 +22,12 @@ class OrderFunctionsTest {
     private static final Pattern INTERNAL_500 =
             Pattern.compile("(?s)(?!.*\"error\":\"(ORDER_NOT_FOUND|INVALID_REQUEST)\").+");
 
+    // POST /orders also maps the runtime deserialization failure to 400.
+    private static final Pattern POST_BAD_REQUEST_400 =
+            Pattern.compile(".*(\"error\":\"INVALID_REQUEST\"|An error occurred during JSON parsing).*");
+    private static final Pattern POST_INTERNAL_500 = Pattern.compile(
+            "(?s)(?!.*(\"error\":\"(ORDER_NOT_FOUND|INVALID_REQUEST)\"|An error occurred during JSON parsing)).+");
+
     private OrderFunctions functions;
 
     @BeforeEach
@@ -65,6 +71,16 @@ class OrderFunctionsTest {
         assertTrue(BAD_REQUEST_400.matcher(error.getMessage()).matches());
         assertFalse(NOT_FOUND_404.matcher(error.getMessage()).matches());
         assertFalse(INTERNAL_500.matcher(error.getMessage()).matches());
+    }
+
+    @Test
+    void aBodyTheRuntimeCannotDeserializeIsMappedTo400OnPost() {
+        // Observed on AWS when sending {"quantity":"dos"}: the runtime fails before calling OrderFunctions.
+        String runtimeMessage = "An error occurred during JSON parsing";
+
+        assertTrue(POST_BAD_REQUEST_400.matcher(runtimeMessage).matches());
+        assertFalse(POST_INTERNAL_500.matcher(runtimeMessage).matches());
+        assertTrue(POST_INTERNAL_500.matcher("Task timed out after 15.02 seconds").matches());
     }
 
     @Test

@@ -1,0 +1,41 @@
+### orders-create-order <- {"customerId":"CUST-42","product":"MacBook Air","quantity":1}
+None	200
+{"id":"ORD-005","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### orders-create-order <- {"customerId":"CUST-100","product":"Monitor","quantity":3}
+None	200
+{"id":"ORD-006","customerId":"CUST-100","product":"Monitor","quantity":3}
+
+### orders-get-order <- {"id":"ORD-001"}
+None	200
+{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### orders-get-order <- {"id":"ORD-999"}
+Unhandled	200
+{"errorMessage":"{\"error\":\"ORDER_NOT_FOUND\",\"message\":\"Order ORD-999 does not exist\"}","errorType":"co.edu.escuelaing.orders.lambda.mapping.IntegrationErrorException","stackTrace":["co.edu.escuelaing.orders.lambda.mapping.OrderFunctions.call(OrderFunctions.java:55)","co.edu.escuelaing.orders.lambda.mapping.OrderFunctions.getOrder(OrderFunctions.java:44)","java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)","java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)","java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)","java.base/java.lang.reflect.Method.invoke(Unknown Source)"]}
+
+### orders-find-orders <- {"customerId":"CUST-42"}
+None	200
+[{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1},{"id":"ORD-002","customerId":"CUST-42","product":"Magic Mouse","quantity":2}]
+
+========== JSON -> Java conversion experiments ==========
+### orders-create-order <- {"customerId":"CUST-1","product":"Pen","quantity":1,"color":"blue"}
+None	200
+{"id":"ORD-007","customerId":"CUST-1","product":"Pen","quantity":1}
+
+### orders-create-order <- {"CustomerId":"CUST-1","PRODUCT":"Pen","quantity":1}
+Unhandled	200
+{"errorMessage":"{\"error\":\"INVALID_REQUEST\",\"message\":\"customerId is required; product is required\"}","errorType":"co.edu.escuelaing.orders.lambda.mapping.IntegrationErrorException","stackTrace":["co.edu.escuelaing.orders.lambda.mapping.OrderFunctions.call(OrderFunctions.java:57)","co.edu.escuelaing.orders.lambda.mapping.OrderFunctions.createOrder(OrderFunctions.java:40)","java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)","java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)","java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)","java.base/java.lang.reflect.Method.invoke(Unknown Source)"]}
+
+### orders-create-order <- {"customerId":"CUST-1","product":"Pen","quantity":"2"}
+None	200
+{"id":"ORD-008","customerId":"CUST-1","product":"Pen","quantity":2}
+
+### orders-create-order <- {"customerId":"CUST-1","product":"Pen","quantity":"dos"}
+Unhandled	200
+{"errorMessage":"An error occurred during JSON parsing","errorType":"java.lang.RuntimeException","stackTrace":[]}
+
+### orders-get-order <- "ORD-001"
+Unhandled	200
+{"errorMessage":"An error occurred during JSON parsing","errorType":"java.lang.RuntimeException","stackTrace":[]}
+

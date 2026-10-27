@@ -31,11 +31,15 @@ paths:
         responses:
           default:
             statusCode: "201"
-          '.*"error":"INVALID_REQUEST".*':
+          # The Lambda runtime itself rejects bodies it cannot convert to CreateOrderRequest (e.g. "quantity":"two")
+          '.*("error":"INVALID_REQUEST"|An error occurred during JSON parsing).*':
             statusCode: "400"
             responseTemplates:
-              application/json: "$input.path('$.errorMessage')"
-          '(?s)(?!.*"error":"(ORDER_NOT_FOUND|INVALID_REQUEST)").+':
+              # Our errors already are JSON; the runtime's message is wrapped in the API error format.
+              application/json: |
+                #set($message = $input.path('$.errorMessage'))
+                #if($message.startsWith('{'))$message#else{"error":"INVALID_REQUEST","message":"Request body is not a valid order JSON document"}#end
+          '(?s)(?!.*("error":"(ORDER_NOT_FOUND|INVALID_REQUEST)"|An error occurred during JSON parsing)).+':
             statusCode: "500"
             responseTemplates:
               application/json: '{"error":"INTERNAL_ERROR","message":"An unexpected error occurred"}'

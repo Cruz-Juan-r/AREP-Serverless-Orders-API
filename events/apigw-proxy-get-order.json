@@ -1,0 +1,79 @@
+{
+  "version": null,
+  "resource": "/orders/{id}",
+  "path": "/orders/ORD-001",
+  "httpMethod": "GET",
+  "headers": {
+    "Accept": "*/*",
+    "Host": "23w3q9gzkj.execute-api.us-east-1.amazonaws.com",
+    "User-Agent": "curl/8.17.0",
+    "X-Amzn-Trace-Id": "Root=1-6ae0efe4-498941f05b9f9ab55bdfe5ae",
+    "X-Forwarded-For": "203.0.113.10",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "multiValueHeaders": {
+    "Accept": [
+      "*/*"
+    ],
+    "Host": [
+      "23w3q9gzkj.execute-api.us-east-1.amazonaws.com"
+    ],
+    "User-Agent": [
+      "curl/8.17.0"
+    ],
+    "X-Amzn-Trace-Id": [
+      "Root=1-6ae0efe4-498941f05b9f9ab55bdfe5ae"
+    ],
+    "X-Forwarded-For": [
+      "203.0.113.10"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ]
+  },
+  "queryStringParameters": null,
+  "multiValueQueryStringParameters": null,
+  "pathParameters": {
+    "id": "ORD-001"
+  },
+  "stageVariables": null,
+  "requestContext": {
+    "accountId": "472586910705",
+    "stage": "dev",
+    "resourceId": "p5laxj",
+    "requestId": "2cf21fbf-1f52-4191-a66a-11a49ade9e95",
+    "operationName": "getOrder",
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "apiKey": null,
+      "principalOrgId": null,
+      "sourceIp": "203.0.113.10",
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "curl/8.17.0",
+      "user": null,
+      "accessKey": null
+    },
+    "resourcePath": "/orders/{id}",
+    "httpMethod": "GET",
+    "apiId": "23w3q9gzkj",
+    "path": "/dev/orders/ORD-001",
+    "authorizer": null,
+    "extendedRequestId": "F6pr0GY4IAMEDkw=",
+    "requestTime": "27/Oct/2026:18:39:32 +0000",
+    "requestTimeEpoch": 1793126372778,
+    "domainName": "23w3q9gzkj.execute-api.us-east-1.amazonaws.com",
+    "domainPrefix": "23w3q9gzkj",
+    "protocol": "HTTP/1.1"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}

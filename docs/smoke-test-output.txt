@@ -1,0 +1,275 @@
+================ https://8vwg9zcm6f.execute-api.us-east-1.amazonaws.com/dev ================
+### GET dev/orders/ORD-001
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:13 GMT
+Content-Type: application/json
+Content-Length: 76
+Connection: keep-alive
+x-amzn-RequestId: d37e0772-9764-40f2-93ae-504273b92d54
+x-amz-apigw-id: F6qE5Hz6oAMEelw=
+X-Amzn-Trace-Id: Root=1-6ae0f085-5798ee390cd2ad5103fedf55;Parent=74ac892beff76dfd;Sampled=0;Lineage=1:14f4dcd3:0
+
+{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### GET dev/orders/ORD-999
+HTTP/1.1 404 Not Found
+Date: Tue, 27 Oct 2026 18:42:16 GMT
+Content-Type: application/json
+Content-Length: 68
+Connection: keep-alive
+x-amzn-RequestId: 89b6c7d9-55f9-469d-bede-2e9696f962b5
+x-amz-apigw-id: F6qFBHZcoAMEOYQ=
+X-Amzn-Trace-Id: Root=1-6ae0f086-37fb488d5aee5b4e37c179a5;Parent=30c481712d1c999a;Sampled=0;Lineage=1:14f4dcd3:0
+
+{"error":"ORDER_NOT_FOUND","message":"Order ORD-999 does not exist"}
+
+### GET dev/orders?customerId=CUST-42
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:17 GMT
+Content-Type: application/json
+Content-Length: 155
+Connection: keep-alive
+x-amzn-RequestId: fa1bd30d-e523-4529-b07e-e711bc1ebc33
+x-amz-apigw-id: F6qFYEpIoAMEAPw=
+X-Amzn-Trace-Id: Root=1-6ae0f088-6b35d7c1044609c81775c526;Parent=495a41cea0cf076f;Sampled=0;Lineage=1:7fce75d7:0
+
+[{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1},{"id":"ORD-002","customerId":"CUST-42","product":"Magic Mouse","quantity":2}]
+
+### GET dev/orders?customerId=CUST-100
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:17 GMT
+Content-Type: application/json
+Content-Length: 2
+Connection: keep-alive
+x-amzn-RequestId: 8b108934-8e87-40b5-a410-c9f317c94369
+x-amz-apigw-id: F6qFiGBhoAMEVxA=
+X-Amzn-Trace-Id: Root=1-6ae0f089-0eeaf5111637a0453b8ee0ee;Parent=213c3de04bfefbbe;Sampled=0;Lineage=1:7fce75d7:0
+
+[]
+
+### GET dev/orders
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:19 GMT
+Content-Type: application/json
+Content-Length: 62
+Connection: keep-alive
+x-amzn-RequestId: 543b36b5-dd8b-4167-b451-0368b79b5a18
+x-amz-apigw-id: F6qFmHsCIAMEWjA=
+X-Amzn-Trace-Id: Root=1-6ae0f089-65b5b38f6d3a88275599200b;Parent=7f08fbceeb829c55;Sampled=0;Lineage=1:7fce75d7:0
+
+{"error":"INVALID_REQUEST","message":"customerId is required"}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"MacBook Air","quantity":1}
+HTTP/1.1 201 Created
+Date: Tue, 27 Oct 2026 18:42:19 GMT
+Content-Type: application/json
+Content-Length: 76
+Connection: keep-alive
+x-amzn-RequestId: d7f21f44-2cd0-4e3d-8b9f-96a62a7c4b19
+x-amz-apigw-id: F6qF6FlPIAMEbvA=
+X-Amzn-Trace-Id: Root=1-6ae0f08b-73f61b8d636ae4e16866ebfe;Parent=0aa561402d9b3769;Sampled=0;Lineage=1:ab21bb05:0
+
+{"id":"ORD-004","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"","quantity":0}
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:20 GMT
+Content-Type: application/json
+Content-Length: 92
+Connection: keep-alive
+x-amzn-RequestId: 308e76c5-a33c-489b-abb0-e97d740560a0
+x-amz-apigw-id: F6qF9EIHoAMEnGA=
+X-Amzn-Trace-Id: Root=1-6ae0f08c-061ae9696d8f2e731d6fafd1;Parent=3b1babb059403a61;Sampled=0;Lineage=1:ab21bb05:0
+
+{"error":"INVALID_REQUEST","message":"product is required; quantity must be greater than 0"}
+
+### POST dev/orders
+{not json
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:20 GMT
+Content-Type: application/json
+Content-Length: 40
+Connection: keep-alive
+x-amzn-RequestId: d5b12447-8050-464d-b242-8d4d0d2f8210
+x-amzn-ErrorType: BadRequestException
+x-amz-apigw-id: F6qGAGYCIAMEp7Q=
+
+{"message": "Could not process payload"}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"Pen","quantity":"dos"}
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:20 GMT
+Content-Type: application/json
+Content-Length: 87
+Connection: keep-alive
+x-amzn-RequestId: d3f7e010-d0f8-4654-9cab-8ff580e89cf5
+x-amz-apigw-id: F6qGDFplIAMEM4Q=
+X-Amzn-Trace-Id: Root=1-6ae0f08c-281045716660de05049dbd42;Parent=46d40ecbf86e0bf7;Sampled=0;Lineage=1:ab21bb05:0
+
+{"error":"INVALID_REQUEST","message":"Request body is not a valid order JSON document"}
+
+### DELETE dev/orders/ORD-002
+HTTP/1.1 403 Forbidden
+Date: Tue, 27 Oct 2026 18:42:20 GMT
+Content-Type: application/json
+Content-Length: 42
+Connection: keep-alive
+x-amzn-RequestId: 41a42133-82fa-4314-b85b-8bb2b8a603aa
+x-amzn-ErrorType: MissingAuthenticationTokenException
+x-amz-apigw-id: F6qGGHdYoAMEENA=
+
+{"message":"Missing Authentication Token"}
+
+### DELETE dev/orders/ORD-002
+HTTP/1.1 403 Forbidden
+Date: Tue, 27 Oct 2026 18:42:21 GMT
+Content-Type: application/json
+Content-Length: 42
+Connection: keep-alive
+x-amzn-RequestId: ceef3ca7-8cf2-48c4-a9e5-f904b54a4c8e
+x-amzn-ErrorType: MissingAuthenticationTokenException
+x-amz-apigw-id: F6qGJHbiIAMEvlQ=
+
+{"message":"Missing Authentication Token"}
+
+================ https://23w3q9gzkj.execute-api.us-east-1.amazonaws.com/dev ================
+### GET dev/orders/ORD-001
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:23 GMT
+Content-Type: application/json
+Content-Length: 76
+Connection: keep-alive
+x-amzn-RequestId: 2e85890c-1aa9-4de3-a98d-dbe87c21747e
+x-amz-apigw-id: F6qGNEQsIAMEhNg=
+X-Amzn-Trace-Id: Root=1-6ae0f08d-19a639df733d78573eb5d919;Parent=340717aa6bc8b4af;Sampled=0;Lineage=1:634aee13:0
+
+{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### GET dev/orders/ORD-999
+HTTP/1.1 404 Not Found
+Date: Tue, 27 Oct 2026 18:42:23 GMT
+Content-Type: application/json
+Content-Length: 68
+Connection: keep-alive
+x-amzn-RequestId: 764c9115-da36-4ad6-bb72-9245f48708aa
+x-amz-apigw-id: F6qGfGVJoAMEfCw=
+X-Amzn-Trace-Id: Root=1-6ae0f08f-5a73457641ec46ea2e57518a;Parent=47707f882ce6848c;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"ORDER_NOT_FOUND","message":"Order ORD-999 does not exist"}
+
+### GET dev/orders?customerId=CUST-42
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:23 GMT
+Content-Type: application/json
+Content-Length: 155
+Connection: keep-alive
+x-amzn-RequestId: 11aad2be-0977-448c-8be6-a3e21eede401
+x-amz-apigw-id: F6qGjGoUoAMEQpA=
+X-Amzn-Trace-Id: Root=1-6ae0f08f-745f6cd13ea51b8850aa6c84;Parent=73229a9723aec28f;Sampled=0;Lineage=1:634aee13:0
+
+[{"id":"ORD-001","customerId":"CUST-42","product":"MacBook Air","quantity":1},{"id":"ORD-002","customerId":"CUST-42","product":"Magic Mouse","quantity":2}]
+
+### GET dev/orders?customerId=CUST-100
+HTTP/1.1 200 OK
+Date: Tue, 27 Oct 2026 18:42:24 GMT
+Content-Type: application/json
+Content-Length: 2
+Connection: keep-alive
+x-amzn-RequestId: 06d5a0c6-362a-4f54-8c4c-7f3468a176ef
+x-amz-apigw-id: F6qGmGwTIAMEb1Q=
+X-Amzn-Trace-Id: Root=1-6ae0f090-2633b43518c8a45942c1541d;Parent=614fc3fc9659e9b9;Sampled=0;Lineage=1:634aee13:0
+
+[]
+
+### GET dev/orders
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:24 GMT
+Content-Type: application/json
+Content-Length: 62
+Connection: keep-alive
+x-amzn-RequestId: 22fedd74-1f5f-4bc4-806b-70fd5cdd08a3
+x-amz-apigw-id: F6qGpGH0oAMEt0Q=
+X-Amzn-Trace-Id: Root=1-6ae0f090-26d4478606cfb67976162dfa;Parent=16dd95ba44731335;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"INVALID_REQUEST","message":"customerId is required"}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"MacBook Air","quantity":1}
+HTTP/1.1 201 Created
+Date: Tue, 27 Oct 2026 18:42:25 GMT
+Content-Type: application/json
+Content-Length: 76
+Connection: keep-alive
+x-amzn-RequestId: 13bb1052-a919-4bde-9acb-6adcd9466e5d
+x-amz-apigw-id: F6qGtHWwIAMEb0Q=
+Location: /dev/orders/ORD-004
+X-Amzn-Trace-Id: Root=1-6ae0f090-0495a83a360ae8e57e2f7e04;Parent=675a1812f25e5169;Sampled=0;Lineage=1:634aee13:0
+
+{"id":"ORD-004","customerId":"CUST-42","product":"MacBook Air","quantity":1}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"","quantity":0}
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:25 GMT
+Content-Type: application/json
+Content-Length: 92
+Connection: keep-alive
+x-amzn-RequestId: 6c12e56f-3f0b-436a-b912-0bc4e6c2e7e8
+x-amz-apigw-id: F6qGyFKbIAMEqRA=
+X-Amzn-Trace-Id: Root=1-6ae0f091-7fb0b6862f20fb4a6b5a3d9e;Parent=4ec10f11d5a0e71a;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"INVALID_REQUEST","message":"product is required; quantity must be greater than 0"}
+
+### POST dev/orders
+{not json
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:25 GMT
+Content-Type: application/json
+Content-Length: 87
+Connection: keep-alive
+x-amzn-RequestId: 36be8fd3-5e95-45a1-8d68-39108f1a1d33
+x-amz-apigw-id: F6qG2Gd4oAMEJnQ=
+X-Amzn-Trace-Id: Root=1-6ae0f091-29a241ce169b4e3c704da1a9;Parent=7412383842b63058;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"INVALID_REQUEST","message":"Request body is not a valid order JSON document"}
+
+### POST dev/orders
+{"customerId":"CUST-42","product":"Pen","quantity":"dos"}
+HTTP/1.1 400 Bad Request
+Date: Tue, 27 Oct 2026 18:42:26 GMT
+Content-Type: application/json
+Content-Length: 87
+Connection: keep-alive
+x-amzn-RequestId: eed7fee6-46be-4e0e-9715-61f0115a8a57
+x-amz-apigw-id: F6qG5FOLIAMEDxQ=
+X-Amzn-Trace-Id: Root=1-6ae0f092-475bb92153b9f3341116efc9;Parent=7fa6aa177d36e203;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"INVALID_REQUEST","message":"Request body is not a valid order JSON document"}
+
+### DELETE dev/orders/ORD-002
+HTTP/1.1 204 No Content
+Date: Tue, 27 Oct 2026 18:42:26 GMT
+Content-Type: application/json
+Content-Length: 0
+Connection: keep-alive
+x-amzn-RequestId: 42123589-ccaa-4791-84e9-cdc3d71caca4
+x-amz-apigw-id: F6qG8H_-IAMEmzA=
+X-Amzn-Trace-Id: Root=1-6ae0f092-78c259b80ba5ef8575b9b7e7;Parent=7f23e03a2723bc86;Sampled=0;Lineage=1:634aee13:0
+
+
+
+### DELETE dev/orders/ORD-002
+HTTP/1.1 404 Not Found
+Date: Tue, 27 Oct 2026 18:42:26 GMT
+Content-Type: application/json
+Content-Length: 68
+Connection: keep-alive
+x-amzn-RequestId: 68e36388-bc25-40dd-88ad-ba334e78f957
+x-amz-apigw-id: F6qG_F_poAMErSQ=
+X-Amzn-Trace-Id: Root=1-6ae0f092-4a00cbb4665a2bda6705fea2;Parent=123e809423b18e0b;Sampled=0;Lineage=1:634aee13:0
+
+{"error":"ORDER_NOT_FOUND","message":"Order ORD-002 does not exist"}
+

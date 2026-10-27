@@ -28,6 +28,7 @@ for base in "$MAPPING_URL" "$PROXY_URL"; do
   call POST "$base/orders" '{"customerId":"CUST-42","product":"MacBook Air","quantity":1}'
   call POST "$base/orders" '{"customerId":"CUST-42","product":"","quantity":0}'
   call POST "$base/orders" '{not json'
+  call POST "$base/orders" '{"customerId":"CUST-42","product":"Pen","quantity":"dos"}'
   call DELETE "$base/orders/ORD-002"
   call DELETE "$base/orders/ORD-002"
 done

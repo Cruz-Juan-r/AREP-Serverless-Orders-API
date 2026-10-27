@@ -3,7 +3,6 @@
 # Usage: ./infra/deploy.sh            (requires valid AWS credentials)
 # Env:   AWS_REGION (us-east-1), STAGE (dev), LAMBDA_ROLE_ARN (LabRole of AWS Academy)
 set -euo pipefail
-export MSYS_NO_PATHCONV=1   # Git Bash on Windows: do not rewrite arguments that look like paths
 
 cd "$(dirname "$0")/.."
 REGION=${AWS_REGION:-us-east-1}
@@ -16,6 +15,8 @@ PKG=co.edu.escuelaing.orders.lambda
 if [[ "${SKIP_BUILD:-false}" != "true" ]]; then
   mvn -q package
 fi
+# Git Bash on Windows: do not rewrite AWS arguments that look like paths (set after Maven, which needs it)
+export MSYS_NO_PATHCONV=1
 
 # deploy_function <name> <handler> [environment]
 deploy_function() {
