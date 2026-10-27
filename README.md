@@ -297,32 +297,44 @@ En B, un pedido creado con `POST` **sí** se encuentra después con `GET` (mient
 ## 9. Diagrama de la arquitectura final
 
 ```mermaid
-flowchart TB
+flowchart LR
     C["Cliente HTTP<br/>(curl / Postman)"]
 
     subgraph AWS["Depende de AWS"]
-        APIGW["Amazon API Gateway<br/>REST API orders-api-proxy, stage dev<br/>POST /orders · GET /orders<br/>GET /orders/{id} · DELETE /orders/{id}<br/>(solo enruta, integración AWS_PROXY)"]
+        direction LR
+        APIGW["Amazon API Gateway<br/>REST API orders-api-proxy · stage dev<br/>POST /orders · GET /orders<br/>GET /orders/{id} · DELETE /orders/{id}<br/>solo enruta (AWS_PROXY)"]
         subgraph L["AWS Lambda: orders-api-proxy (java17)"]
-            H["OrdersApiHandler<br/>Adaptador HTTP<br/>usa aws-lambda-java-events + Jackson<br/>rutas · parámetros · códigos · JSON"]
+            H["OrdersApiHandler<br/><b>Adaptador HTTP</b><br/>aws-lambda-java-events + Jackson<br/>rutas · parámetros · códigos · JSON"]
         end
     end
 
     subgraph JAVA["Java puro (sin AWS, sin HTTP)"]
+        direction TB
         S["OrderService<br/>reglas de negocio y validación"]
-        D["domain<br/>Order · CreateOrderRequest<br/>OrderNotFoundException · InvalidRequestException"]
-        RI["OrderRepository (interfaz)"]
+        D["domain<br/>Order · CreateOrderRequest<br/>OrderNotFoundException<br/>InvalidRequestException"]
+        RI["OrderRepository<br/>(interfaz)"]
         RM[("InMemoryOrderRepository<br/>no persistente")]
+        S --> D
+        S --> RI
+        RM -. implementa .-> RI
     end
 
     C -- "1. petición HTTPS" --> APIGW
-    APIGW -- "2. evento proxy (JSON)" --> H
+    APIGW -- "2. evento proxy" --> H
     H -- "3. llamada Java" --> S
-    S --> D
-    S --> RI
-    RI -. implementa .- RM
-    S -- "4. Order / excepción" --> H
-    H -- "5. {statusCode, headers, body}" --> APIGW
-    APIGW -- "6. respuesta HTTP" --> C
+    S -. "4. Order / excepción" .-> H
+    H -. "5. statusCode, headers, body" .-> APIGW
+    APIGW -. "6. respuesta HTTP" .-> C
+
+    classDef aws fill:#fff4e5,stroke:#ff9900,color:#232f3e
+    classDef java fill:#e8f1fb,stroke:#3b6fb6,color:#1b2b40
+    classDef client fill:#f2f2f2,stroke:#666,color:#222
+    class APIGW,H aws
+    class S,D,RI,RM java
+    class C client
+    style AWS fill:#fffaf2,stroke:#ff9900
+    style L fill:#ffffff,stroke:#ff9900
+    style JAVA fill:#f5f9ff,stroke:#3b6fb6
 ```
 
 Las dependencias van de afuera hacia adentro. El adaptador conoce el servicio y el servicio no conoce el adaptador. La arquitectura A (para comparar) se ve así:
@@ -403,6 +415,7 @@ Estructura del repositorio:
 orders-api/
 ├── pom.xml
 ├── README.md
+├── capturas/        evidencias de la demostración (PNG)
 ├── docs/            predicción del DELETE, salidas reales de invoke y smoke test
 ├── events/          eventos proxy reales de API Gateway
 ├── infra/           OpenAPI de ambas APIs + scripts de despliegue y prueba
@@ -426,17 +439,54 @@ aws apigateway delete-rest-api --rest-api-id 8vwg9zcm6f
 aws apigateway delete-rest-api --rest-api-id 23w3q9gzkj
 ```
 
-## 13. Demostración
+## 13. Evidencias de la demostración
 
-El video de demostración recorre, en este orden:
+Capturas de la ejecución real de cada paso (carpeta [`capturas/`](capturas)), tomadas el 27/10/2026 sobre los recursos desplegados en la cuenta de AWS Academy.
 
-1. `mvn test` → se ven las 38 pruebas en verde.
-2. `mvn package` → `ls -la target/orders-api.jar`.
-3. `./infra/invoke-lambda.sh` (o la consola de Lambda → *Test*) → invocación directa de `orders-create-order` y `orders-get-order`, incluido el error de `ORD-999`.
-4. Llamadas a la API desplegada (`PROXY_URL`):
-   - `POST` exitoso → `201` + `Location`
-   - `GET /orders/ORD-001` → `200`
-   - `GET /orders/ORD-999` → `404`
-   - `POST` con `"quantity":0` → `400`
-   - `DELETE /orders/ORD-002` → `204`, y repetirlo → `404`
-5. El diagrama de arquitectura de la sección 9.
+**1. Pruebas locales con `mvn test`:** 38 pruebas, 0 fallos, sin AWS.
+
+![mvn test](capturas/01-mvn-test.png)
+
+**2. Empaquetado con `mvn package`:** JAR con dependencias (shade) listo para Lambda.
+
+![mvn package](capturas/02-mvn-package.png)
+
+**3. Invocación directa de una Lambda** (`orders-create-order`): JSON de entrada → objeto Java → JSON de salida.
+
+![Invocación directa create](capturas/03-lambda-invoke-create.png)
+
+**4. Invocación directa de `orders-get-order`:** pedido existente, y pedido inexistente (la excepción llega como `errorMessage`/`errorType`, con `FunctionError: Unhandled`).
+
+![Invocación directa get](capturas/04-lambda-invoke-get.png)
+
+**5. API desplegada: `POST` exitoso:** `201 Created` con el header `Location`.
+
+![POST 201](capturas/05-api-post-201.png)
+
+**6. API desplegada: `GET` exitoso:** `200 OK` por id y por cliente.
+
+![GET 200](capturas/06-api-get-200.png)
+
+**7. API desplegada: pedido inexistente:** `404 Not Found` con el formato de error del contrato.
+
+![GET 404](capturas/07-api-get-404.png)
+
+**8. API desplegada: entrada inválida:** `400 Bad Request` (campos inválidos y falta de `customerId`).
+
+![POST 400](capturas/08-api-post-400.png)
+
+**9. Extensión `DELETE /orders/{id}`:** `204 No Content` y, al repetirlo, `404 Not Found`.
+
+![DELETE 204 y 404](capturas/09-api-delete.png)
+
+**10. Recursos desplegados en AWS:** las 4 funciones Lambda con su handler, y los recursos y métodos de la API proxy.
+
+![Recursos AWS](capturas/10-aws-recursos.png)
+
+**11. Diagrama de la arquitectura final** (el mismo de la sección 9).
+
+![Diagrama final](capturas/11-diagrama-arquitectura-final.png)
+
+**12. Diagrama del Checkpoint 2** (conversión JSON ↔ Java en Lambda).
+
+![Diagrama checkpoint 2](capturas/12-diagrama-lambda-checkpoint2.png)
