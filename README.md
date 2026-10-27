@@ -2,6 +2,18 @@
 
 API REST pequeña para gestionar pedidos (*orders*), construida en Java 17 + Maven y expuesta con AWS Lambda y Amazon API Gateway. El taller compara dos formas de conectar HTTP con Lambda (integración con *mapping templates* vs. integración *proxy*) y analiza dónde debe vivir cada responsabilidad.
 
+**API desplegada (arquitectura final, integración proxy):** `https://23w3q9gzkj.execute-api.us-east-1.amazonaws.com/dev`  
+**API con mapping templates (arquitectura A, para comparar):** `https://8vwg9zcm6f.execute-api.us-east-1.amazonaws.com/dev`
+
+```bash
+curl -i https://23w3q9gzkj.execute-api.us-east-1.amazonaws.com/dev/orders/ORD-001
+curl -i "https://23w3q9gzkj.execute-api.us-east-1.amazonaws.com/dev/orders?customerId=CUST-42"
+curl -i -X POST https://23w3q9gzkj.execute-api.us-east-1.amazonaws.com/dev/orders \
+     -H "Content-Type: application/json" -d '{"customerId":"CUST-42","product":"MacBook Air","quantity":1}'
+```
+
+**Tecnologías:** Java 17, Maven 3.9, JUnit 5, Jackson, AWS Lambda (runtime `java17`), Amazon API Gateway (REST API regional), AWS CLI.
+
 ## 1. Diseño de la API (contrato)
 
 Se diseñó antes de escribir código Java.
@@ -414,7 +426,9 @@ aws apigateway delete-rest-api --rest-api-id 8vwg9zcm6f
 aws apigateway delete-rest-api --rest-api-id 23w3q9gzkj
 ```
 
-## 13. Guion del video de demostración
+## 13. Demostración
+
+El video de demostración recorre, en este orden:
 
 1. `mvn test` → se ven las 38 pruebas en verde.
 2. `mvn package` → `ls -la target/orders-api.jar`.
@@ -425,4 +439,4 @@ aws apigateway delete-rest-api --rest-api-id 23w3q9gzkj
    - `GET /orders/ORD-999` → `404`
    - `POST` con `"quantity":0` → `400`
    - `DELETE /orders/ORD-002` → `204`, y repetirlo → `404`
-5. Abrir este README en GitHub y mostrar el diagrama de la sección 9.
+5. El diagrama de arquitectura de la sección 9.
